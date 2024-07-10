@@ -1,72 +1,78 @@
-#include <stdio.h>
-#include <stdlib.h>
-
+#include<stdio.h>
+#include<stdlib.h>
 #define MAX_REQUESTS 100
 
-// Function to calculate total seek time using C-SCAN algorithm
-int calculateTotalSeekTime(int *requests, int numRequests) {
-    int totalSeekTime = 0;
-    int currentTrack = 0; // Start at track 0
-    int direction = 1; // Initial direction: towards higher tracks
-
-    // Sort requests in ascending order
-    for (int i = 0; i < numRequests - 1; i++) {
-        for (int j = 0; j < numRequests - i - 1; j++) {
-            if (requests[j] > requests[j + 1]) {
-                int temp = requests[j];
-                requests[j] = requests[j + 1];
-                requests[j + 1] = temp;
+ void sort(int arr[], int n){
+    for(int i=0;i<n-i;i++){
+        for(int j=0;j<n-i-1;j++){
+            if(arr[j]>arr[j+1]){
+                int temp=arr[j];
+                arr[j]=arr[j+1];
+                arr[j+1]=temp;
             }
         }
     }
+ }
+void CSCAN(int requests[],int n, int head,int disk_Size){
+    int totalseekTime=0;
+    int currentTrack=head;
+    int seekSequence[MAX_REQUESTS];
+    int index=0;
 
-    // Iterate through each request
-    for (int i = 0; i < numRequests; i++) {
-        // Scan in the current direction until the end of the disk
-        while (currentTrack >= 0 && currentTrack <= 199) {
-            // Check if the current request lies on the current track
-            if (requests[i] == currentTrack) {
-                totalSeekTime += abs(currentTrack - requests[i]); // Add seek time
-                requests[i] = -1; // Mark request as serviced
-                break; // Move to next request
-            }
-            // Move the disk arm in the current direction
-            currentTrack += direction;
-            totalSeekTime++; // Increment total seek time
-        }
+    sort(requests,n);
 
-        // If reached the end of the disk, wrap around to the beginning
-        if (currentTrack == 200) {
-            currentTrack = 0;
-            direction = 1; // Move towards higher tracks
+    printf("Seek Sequence :\n");
+    for(int i=0;i<n;i++){
+        if(requests[i]>=head){
+            seekSequence[index++]=requests[i];
+            printf("%d->",requests[i]);
+            totalseekTime+=abs(currentTrack-requests[i]);
+            currentTrack=requests[i];
         }
     }
-
-    return totalSeekTime;
+    if(currentTrack!=disk_Size-1){
+        totalseekTime+=abs(currentTrack-(disk_Size-1));
+        currentTrack=disk_Size-1;
+        printf("%d->",currentTrack);
+    }
+    totalseekTime+=abs(currentTrack-0);
+    currentTrack=0;
+    printf("%d->",currentTrack);
+    for(int i=0;i<n;i++){
+        if(requests[i]<head){
+            seekSequence[index++]=requests[i];
+            printf("%d->,",requests[i]);
+            totalseekTime+=abs(currentTrack-requests[i]);
+        }
+    }
+    printf("End\n");
+    printf("TotalSeekTime %d\n",totalseekTime);
+    printf("Average SeekTime %d",(float)totalseekTime/n);
 }
-
 int main() {
-    int requests[MAX_REQUESTS];
     int numRequests;
+    int requests[MAX_REQUESTS];
+    int head, disk_size;
 
-    // Input number of disk requests
     printf("Enter the number of disk requests: ");
     scanf("%d", &numRequests);
-
     if (numRequests <= 0 || numRequests > MAX_REQUESTS) {
-        printf("Invalid number of requests.\n");
+        printf("Invalid number of requests\n");
         return 1;
     }
 
-    // Input disk requests
-    printf("Enter the disk requests (track numbers):\n");
+    printf("Enter disk requests (track numbers):\n");
     for (int i = 0; i < numRequests; i++) {
         scanf("%d", &requests[i]);
     }
 
-    // Calculate and print total seek time
-    int totalSeekTime = calculateTotalSeekTime(requests, numRequests);
-    printf("Total seek time using C-SCAN: %d\n", totalSeekTime);
+    printf("Enter the initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter the disk size: ");
+    scanf("%d", &disk_size);
+
+    CSCAN(requests, numRequests, head, disk_size);
 
     return 0;
 }
