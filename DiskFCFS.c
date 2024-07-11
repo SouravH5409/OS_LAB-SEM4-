@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #define MAX_REQUESTS 100
 
 // Function to calculate total seek time using FCFS algorithm
@@ -35,13 +34,11 @@ int main() {
         printf("Invalid number of requests.\n");
         return 1;
     }
-
     // Input disk requests
     printf("Enter the disk requests (track numbers):\n");
     for (int i = 0; i < numRequests; i++) {
         scanf("%d", &requests[i]);
     }
-
     // Calculate and print total seek time
     int totalSeekTime = calculateTotalSeekTime(requests, numRequests);
     printf("Total seek time using FCFS: %d\n", totalSeekTime);
