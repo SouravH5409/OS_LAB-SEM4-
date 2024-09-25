@@ -1,21 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_FRAMES 3 // Maximum number of frames
-#define MAX_PAGES 20 // Maximum number of pages
+#define MAX_FRAMES 3 
+#define MAX_PAGES 20 
 
-int frames[MAX_FRAMES]; // Array to store the frames
-int counter[MAX_FRAMES]; // Array to store the counter for each frame
+int frames[MAX_FRAMES]; 
+int counter[MAX_FRAMES]; 
 
-// Function to initialize frames and counter arrays
 void initialize() {
     for (int i = 0; i < MAX_FRAMES; i++) {
-        frames[i] = -1; // Initializing frames with -1 (empty)
-        counter[i] = 0; // Initializing counter with 0
+        frames[i] = -1; 
+        counter[i] = 0; 
     }
 }
 
-// Function to display the frames
 void displayFrames() {
     for (int i = 0; i < MAX_FRAMES; i++) {
         if (frames[i] != -1)
@@ -25,8 +23,6 @@ void displayFrames() {
     }
     printf("\n");
 }
-
-// Function to find the least recently used frame
 int findLRU() {
     int max = counter[0];
     int lru_frame = 0;
@@ -37,11 +33,8 @@ int findLRU() {
             lru_frame = i;
         }
     }
-
     return lru_frame;
 }
-
-// Function to implement LRU page replacement algorithm
 void LRU(int pages[], int n) {
     int page_faults = 0;
 
@@ -49,7 +42,6 @@ void LRU(int pages[], int n) {
         int page = pages[i];
         int found = 0;
 
-        // Check if page already exists in frames
         for (int j = 0; j < MAX_FRAMES; j++) {
             if (frames[j] == page) {
                 found = 1;
@@ -66,20 +58,15 @@ void LRU(int pages[], int n) {
             page_faults++;
         }
 
-        // Increment counter for all frames
         for (int j = 0; j < MAX_FRAMES; j++) {
             counter[j]++;
         }
-
-        // Reset counter for the used frame
         for (int j = 0; j < MAX_FRAMES; j++) {
             if (frames[j] == page) {
                 counter[j] = 0;
                 break;
             }
         }
-
-        //printf("Page %d : ", page);
         displayFrames();
     }
 
@@ -87,19 +74,15 @@ void LRU(int pages[], int n) {
 }
 
 int main() {
-    int pages[MAX_PAGES]; // Array to store pages
-
-    // Example sequence of page references
-    int n;
+    int pages[MAX_PAGES];
     printf("Enter number of pages: ");
     scanf("%d", &n);
     printf("Enter the page reference sequence: ");
     for (int i = 0; i < n; i++) {
         scanf("%d", &pages[i]);
     }
-
-    initialize(); // Initialize frames and counter arrays
-    LRU(pages, n); // Apply LRU algorithm
+    initialize(); 
+    LRU(pages, n); 
 
     return 0;
 }
